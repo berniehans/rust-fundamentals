@@ -1,0 +1,25 @@
+[workspace]
+resolver = "2"
+members = [
+    "chapters/ch01_getting_started",
+    "chapters/ch02_guessing_game",
+    "chapters/ch03_common_concepts",
+    "chapters/ch04_understanding_ownership",
+    "chapters/ch05_using_structs",
+    "chapters/ch06_enums_patterns",
+    "chapters/ch07_managing_projects",
+    "chapters/ch08_common_collections",
+    "chapters/ch09_error_handling",
+    "chapters/ch10_generics_traits_lifetimes",
+    "chapters/ch11_writing_tests",
+    "chapters/ch12_minigrep",
+    "chapters/ch13_functional_features",
+    "chapters/ch14_cargo_more",
+    "chapters/ch15_smart_pointers",
+    "chapters/ch16_fearless_concurrency",
+    "chapters/ch17_oop_features",
+    "chapters/ch18_patterns_matching",
+    "chapters/ch19_advanced_features",
+    "chapters/ch20_web_server",
+    "exercises/ex01_getting_started",
+]
