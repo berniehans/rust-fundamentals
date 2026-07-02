@@ -35,28 +35,28 @@ rust-fundamentals/
 
 A continuación se muestra la correspondencia de los capítulos del libro con su respectivo crate dentro de `chapters/`:
 
-| Capítulo | Título Oficial del Libro | Código (Crate) | Guía Teórica (Docs) | Estado |
-| :---: | :--- | :--- | :--- | :---: |
-| **01** | Getting Started | `ch01_getting_started` | [ch01_getting_started.md](docs/ch01_getting_started.md) | `[x]` |
-| **02** | Programming a Guessing Game | `ch02_guessing_game` | [ch02_guessing_game.md](docs/ch02_guessing_game.md) | `[x]` |
-| **03** | Common Programming Concepts (Variables, Control de flujo) | `ch03_common_concepts` | *Próximamente* | `[ ]` |
-| **04** | Understanding Ownership (El corazón de Rust: Ownership, Slices) | `ch04_understanding_ownership` | *Próximamente* | `[ ]` |
-| **05** | Using Structs to Structure Related Data | `ch05_using_structs` | *Próximamente* | `[ ]` |
-| **06** | Enums and Pattern Matching | `ch06_enums_patterns` | *Próximamente* | `[ ]` |
-| **07** | Managing Growing Projects (Crates, Módulos, Scope) | `ch07_managing_projects` | *Próximamente* | `[ ]` |
-| **08** | Common Collections (Vectores, Strings, HashMaps) | `ch08_common_collections` | *Próximamente* | `[ ]` |
-| **09** | Error Handling (panic! y Result) | `ch09_error_handling` | *Próximamente* | `[ ]` |
-| **10** | Generic Types, Traits, and Lifetimes | `ch10_generics_traits_lifetimes` | *Próximamente* | `[ ]` |
-| **11** | Writing Automated Tests | `ch11_writing_tests` | *Próximamente* | `[ ]` |
-| **12** | An I/O Project: Building a Command Line Program | `ch12_minigrep` | *Próximamente* | `[ ]` |
-| **13** | Functional Features: Closures & Iterators | `ch13_functional_features` | *Próximamente* | `[ ]` |
-| **14** | More about Cargo and Crates.io | `ch14_cargo_more` | *Próximamente* | `[ ]` |
-| **15** | Smart Pointers (Box, Rc, RefCell, etc.) | `ch15_smart_pointers` | *Próximamente* | `[ ]` |
-| **16** | Fearless Concurrency (Threads, Mutex, Canales MPSC) | `ch16_fearless_concurrency` | *Próximamente* | `[ ]` |
-| **17** | Object-Oriented Programming Features | `ch17_oop_features` | *Próximamente* | `[ ]` |
-| **18** | Patterns and Matching | `ch18_patterns_matching` | *Próximamente* | `[ ]` |
-| **19** | Advanced Features (Unsafe Rust, Advanced Traits, Macros) | `ch19_advanced_features` | *Próximamente* | `[ ]` |
-| **20** | Final Project: Building a Multithreaded Web Server | `ch20_web_server` | *Próximamente* | `[ ]` |
+| Capítulo | Título Oficial del Libro | Código (Crate) | Guía Teórica (Docs) | Ejercicios (Crate) |
+| :---: | :--- | :--- | :--- | :--- |
+| **01** | Getting Started | [ch01_getting_started](chapters/ch01_getting_started) | [ch01_getting_started.md](docs/ch01_getting_started.md) | [ex01_getting_started](exercises/ex01_getting_started) |
+| **02** | Programming a Guessing Game | [ch02_guessing_game](chapters/ch02_guessing_game) | [ch02_guessing_game.md](docs/ch02_guessing_game.md) | [ex02_guessing_game](exercises/ex02_guessing_game) |
+| **03** | Common Programming Concepts (Variables, Control de flujo) | [ch03_common_concepts](chapters/ch03_common_concepts) | [ch03_common_concepts.md](docs/ch03_common_concepts.md) | *Próximamente* |
+| **04** | Understanding Ownership (El corazón de Rust: Ownership, Slices) | [ch04_understanding_ownership](chapters/ch04_understanding_ownership) | [ch04_understanding_ownership.md](docs/ch04_understanding_ownership.md) | *Próximamente* |
+| **05** | Using Structs to Structure Related Data | [ch05_using_structs](chapters/ch05_using_structs) | [ch05_using_structs.md](docs/ch05_using_structs.md) | *Próximamente* |
+| **06** | Enums and Pattern Matching | [ch06_enums_patterns](chapters/ch06_enums_patterns) | [ch06_enums_pattern_matching.md](docs/ch06_enums_pattern_matching.md) | *Próximamente* |
+| **07** | Managing Growing Projects (Crates, Módulos, Scope) | [ch07_managing_projects](chapters/ch07_managing_projects) | [ch07_managing_growing_projects.md](docs/ch07_managing_growing_projects.md) | *Próximamente* |
+| **08** | Common Collections (Vectores, Strings, HashMaps) | [ch08_common_collections](chapters/ch08_common_collections) | [ch08_common_collections.md](docs/ch08_common_collections.md) | *Próximamente* |
+| **09** | Error Handling (panic! y Result) | [ch09_error_handling](chapters/ch09_error_handling) | *Próximamente* | *Próximamente* |
+| **10** | Generic Types, Traits, and Lifetimes | [ch10_generics_traits_lifetimes](chapters/ch10_generics_traits_lifetimes) | *Próximamente* | *Próximamente* |
+| **11** | Writing Automated Tests | [ch11_writing_tests](chapters/ch11_writing_tests) | *Próximamente* | *Próximamente* |
+| **12** | An I/O Project: Building a Command Line Program | [ch12_minigrep](chapters/ch12_minigrep) | *Próximamente* | *Próximamente* |
+| **13** | Functional Features: Closures & Iterators | [ch13_functional_features](chapters/ch13_functional_features) | *Próximamente* | *Próximamente* |
+| **14** | More about Cargo and Crates.io | [ch14_cargo_more](chapters/ch14_cargo_more) | *Próximamente* | *Próximamente* |
+| **15** | Smart Pointers (Box, Rc, RefCell, etc.) | [ch15_smart_pointers](chapters/ch15_smart_pointers) | *Próximamente* | *Próximamente* |
+| **16** | Fearless Concurrency (Threads, Mutex, Canales MPSC) | [ch16_fearless_concurrency](chapters/ch16_fearless_concurrency) | *Próximamente* | *Próximamente* |
+| **17** | Object-Oriented Programming Features | [ch17_oop_features](chapters/ch17_oop_features) | *Próximamente* | *Próximamente* |
+| **18** | Patterns and Matching | [ch18_patterns_matching](chapters/ch18_patterns_matching) | *Próximamente* | *Próximamente* |
+| **19** | Advanced Features (Unsafe Rust, Advanced Traits, Macros) | [ch19_advanced_features](chapters/ch19_advanced_features) | *Próximamente* | *Próximamente* |
+| **20** | Final Project: Building a Multithreaded Web Server | [ch20_web_server](chapters/ch20_web_server) | *Próximamente* | *Próximamente* |
 
 ---
 

@@ -22,4 +22,5 @@ members = [
     "chapters/ch19_advanced_features",
     "chapters/ch20_web_server",
     "exercises/ex01_getting_started",
+    "exercises/ex02_guessing_game",
 ]
