@@ -143,5 +143,4 @@ cargo run -p ch01_getting_started
 
 ## 📚 Recursos Adicionales
 - [Libro Oficial en Inglés (The Rust Programming Language)](https://doc.rust-lang.org/book/)
-- [Libro Oficial en Español (Traducción Comunitaria)](https://goyox86.github.io/el-libro-de-rust/)
 - [Rust by Example (Aprende con ejemplos interactivos)](https://doc.rust-lang.org/rust-by-example/)
