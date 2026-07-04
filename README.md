@@ -65,7 +65,7 @@ A continuación se muestra la correspondencia de los capítulos del libro con su
 ### 1. Clonar el repositorio
 
 ```bash
-git clone https://github.com/tu-usuario/rust-fundamentals.git
+git clone https://github.com/berniehans/rust-fundamentals.git
 cd rust-fundamentals
 ```
 
