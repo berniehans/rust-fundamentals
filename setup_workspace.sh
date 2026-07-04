@@ -5,8 +5,9 @@ set -e
 
 echo "=== Initializing rust-fundamentals Cargo Workspace ==="
 
-# 1. Create the chapters directory if it doesn't exist
+# 1. Create the directories if they don't exist
 mkdir -p chapters
+mkdir -p exercises
 
 # 2. Define the list of chapters matching the Workspace design
 chapters=(
@@ -32,7 +33,31 @@ chapters=(
     "ch20_web_server"
 )
 
-# 3. Create a binary crate for each chapter
+# 3. Define the list of exercises
+exercises=(
+    "ex01_getting_started"
+    "ex02_guessing_game"
+    "ex03_common_concepts"
+    "ex04_understanding_ownership"
+    "ex05_using_structs"
+    "ex06_enums_patterns"
+    "ex07_managing_projects"
+    "ex08_common_collections"
+    "ex09_error_handling"
+    "ex10_generics_traits_lifetimes"
+    "ex11_writing_tests"
+    "ex12_minigrep"
+    "ex13_functional_features"
+    "ex14_cargo_more"
+    "ex15_smart_pointers"
+    "ex16_fearless_concurrency"
+    "ex17_oop_features"
+    "ex18_patterns_matching"
+    "ex19_advanced_features"
+    "ex20_web_server"
+)
+
+# 4. Create a binary crate for each chapter
 echo "Creating crates under chapters/..."
 for chapter in "${chapters[@]}"; do
     if [ ! -d "chapters/$chapter" ]; then
@@ -43,7 +68,18 @@ for chapter in "${chapters[@]}"; do
     fi
 done
 
-# 4. Clean up root src directory if it exists
+# 5. Create a library crate for each exercise
+echo "Creating crates under exercises/..."
+for exercise in "${exercises[@]}"; do
+    if [ ! -d "exercises/$exercise" ]; then
+        echo "Creating ex: exercises/$exercise"
+        cargo new --lib --vcs none "exercises/$exercise"
+    else
+        echo "Exercise exercises/$exercise already exists, skipping."
+    fi
+done
+
+# 6. Clean up root src directory if it exists
 if [ -d "src" ]; then
     echo "Cleaning up root src/ directory to leave workspace clean..."
     rm -rf src

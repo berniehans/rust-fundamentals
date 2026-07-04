@@ -1,6 +1,8 @@
 [package]
 name = "ch07_managing_projects"
 version = "0.1.0"
-edition = "2024"
+edition = { workspace = true }
+rust-version = { workspace = true }
 
 [dependencies]
+

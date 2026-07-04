@@ -1,6 +1,8 @@
 [package]
 name = "ex01_getting_started"
 version = "0.1.0"
-edition = "2024"
+edition = { workspace = true }
+rust-version = { workspace = true }
 
 [dependencies]
+

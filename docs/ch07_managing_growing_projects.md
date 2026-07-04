@@ -24,8 +24,6 @@ En Rust, la privacidad es una propiedad estricta. **Todo elemento (módulo, func
 *   Un módulo principal (padre) **no puede** acceder a los elementos privados declarados dentro de sus módulos secundarios.
 *   Cualquier código externo al crate solo puede acceder a elementos que hayan sido declarados explícitamente con la palabra clave **`pub`**.
 
-Esta filosofía de diseño promueve el acoplamiento débil (loose coupling): al forzar al programador a elegir qué exponer, se asegura que los detalles internos de implementación queden aislados y puedan modificarse sin romper el código cliente externo que consume el módulo.
-
 ---
 
 ## 2. Anatomía y Semántica de la Sintaxis
@@ -36,20 +34,14 @@ Un módulo puede declararse en línea utilizando llaves o delegar su contenido a
 ```rust
 // 1. Declaración de módulo en línea
 pub mod front_of_house {
-    // Para que una función de un módulo público sea accesible desde el exterior,
-    // también debe ser marcada explícitamente como pública ('pub').
     pub mod hosting {
         pub fn add_to_waitlist() {}
     }
 }
-
-// 2. Declaración de módulo externo
-// Indica al compilador que busque el contenido en 'src/back_of_house.rs'
-mod back_of_house;
 ```
 
 ### Privacidad Selectiva en Estructuras y Enums
-*   **Campos de Estructuras:** Si declaramos una estructura como pública (`pub struct`), la estructura en sí es accesible externamente, pero **sus campos individuales siguen siendo privados por defecto**. Se debe marcar con `pub` cada campo que se desee exponer. Si una struct contiene al menos un campo privado, no puede ser construida mediante literales fuera del módulo; requiere obligatoriamente una función asociada constructora de acceso público.
+*   **Campos de Estructuras:** Si declaramos una estructura como pública (`pub struct`), la estructura en sí es accesible externamente, pero **sus campos individuales siguen siendo privados por defecto**. Se debe marcar con `pub` cada campo que se desee exponer.
 *   **Variantes de Enums:** A diferencia de las estructuras, si declaramos un enum como público (`pub enum`), **todas sus variantes pasan a ser públicas automáticamente**. No es necesario ni válido anotar cada variante individual con `pub`.
 
 ```rust
@@ -59,7 +51,6 @@ pub struct Desayuno {
 }
 
 impl Desayuno {
-    // Constructor público obligatorio debido a la existencia del campo privado
     pub fn con_centeno(fruta: &str) -> Desayuno {
         Desayuno {
             pan: String::from("Centeno"),
@@ -75,106 +66,75 @@ impl Desayuno {
 
 ```rust
 pub fn servir_mesa() {
-    // Ruta Absoluta: desde la raíz del crate
+    // Ruta Absoluta
     crate::front_of_house::hosting::add_to_waitlist();
-
-    // Ruta Relativa: utilizando 'super' para retroceder un nivel en la jerarquía
-    super::cocinar_orden();
 }
-
-fn cocinar_orden() {}
 ```
 
 ### Directiva `use` y Reexportación (`pub use`)
 La palabra clave `use` crea un enlace directo del elemento en el ámbito actual, actuando como un alias para evitar escribir rutas extensas en cada invocación.
 
-```rust
-// Traer un módulo al scope (Convención idiomática para funciones)
-use crate::front_of_house::hosting;
-
-// Traer una estructura directamente (Convención idiomática para estructuras y enums)
-use std::collections::HashMap;
-
-fn iniciar() {
-    hosting::add_to_waitlist(); // Invocación limpia
-    let mut mapa = HashMap::new();
-}
-```
-
-#### Reexportación con `pub use`
-Cuando traemos un elemento al scope mediante `use`, este se vuelve privado en el nuevo módulo. Si queremos que otros módulos importen ese elemento a través de nuestro módulo, debemos utilizar **`pub use`**. Esto es útil para ocultar la complejidad interna del crate y ofrecer una interfaz pública (API) plana y simplificada.
-
-```rust
-// Estructura interna compleja
-mod internals {
-    pub struct ParserComplejo;
-}
-
-// Reexportación pública
-pub use internals::ParserComplejo; // Los clientes externos pueden usar 'mi_crate::ParserComplejo'
-```
-
-### Importaciones Anidadas y Operador Glob
-```rust
-// Importaciones múltiples anidadas en una sola línea
-use std::{cmp::Ordering, io};
-
-// Resolver referencias al propio módulo y submódulos
-use std::io::{self, Write}; // Importa 'std::io' y 'std::io::Write'
-
-// Operador Glob: importa todos los elementos públicos al scope actual
-// Usar con precaución en producción para evitar colisiones de nombres
-use std::collections::*;
-```
-
-### Estructuración Física de Archivos en el Disco
-Rust ofrece dos estándares válidos para mapear los módulos a archivos físicos en disco. No deben mezclarse para un mismo módulo:
-
-*   **Estándar Recomendado (Rust 2018+):**
-    ```
-    src/
-    ├── lib.rs              # Declara 'mod cocina;'
-    ├── cocina.rs           # Contiene código de 'cocina' y declara 'mod hornos;'
-    └── cocina/
-        └── hornos.rs       # Contiene código del submódulo 'cocina::hornos'
-    ```
-*   **Estándar Antiguo (Rust 2015):**
-    ```
-    src/
-    ├── lib.rs
-    └── cocina/
-        ├── mod.rs          # Archivo de entrada de 'cocina' y declara submódulos
-        └── hornos.rs
-    ```
-
 ---
 
 ## 3. Bajo el Capó (Gestión de Memoria y Rendimiento)
 
-### Layout de Memoria: Zero-Cost Namespaces
-Es fundamental comprender que el sistema de paquetes, módulos y rutas es estrictamente una **abstracción en tiempo de compilación**.
-*   No existe ninguna representación de "módulo" en el binario compilado de bajo nivel.
-*   Las directivas `use`, `pub use`, y la jerarquía de directorios no consumen bytes en el Stack ni en el Heap en tiempo de ejecución.
-*   El compilador realiza un aplanamiento de símbolos (*name mangling*), traduciendo rutas como `crate::front_of_house::hosting::add_to_waitlist` en identificadores alfanuméricos únicos en la tabla de símbolos del binario final. La llamada a una función dentro de un submódulo se traduce en una instrucción de salto directo (`call` en ensamblador), con exactamente el mismo rendimiento que si fuera una función global lineal.
-
-### Encapsulación de Invariantes a Nivel de Compilador
-La privacidad de campos no es solo una convención estética de código limpio, sino una garantía de seguridad de la memoria y control de invariantes lógicos:
-1.  **Prevención de Estados Mutables Inválidos:** Si una estructura tiene un campo privado que rastrea el tamaño de un búfer interno, Rust impide de forma absoluta que módulos externos alteren dicho número de manera manual. Solo pueden hacerlo a través de métodos seguros provistos por la estructura, garantizando que el tamaño físico del búfer y el campo numérico estén siempre sincronizados.
-2.  **Seguridad de Inicialización:** Al prohibir la inicialización literal de estructuras con campos privados desde el exterior, Rust obliga al uso de constructores (`new`). Esto asegura que los punteros y recursos en memoria se inicialicen en estados seguros antes de su uso.
-
-### Optimización del Tiempo de Compilación
-Cargo aprovecha la estructura de **Crates** independientes para optimizar la compilación:
-*   **Compilación en Paralelo:** Cargo analiza el árbol de dependencias del proyecto. Cualquier crate que no dependa jerárquicamente de otro en compilación puede compilarse en paralelo utilizando múltiples núcleos físicos de la CPU.
-*   **Compilación Incremental:** Rust cachea los resultados de análisis sintáctico y generación de código a nivel de módulo y crate. Si modificas un archivo en un módulo interno de tu proyecto, `rustc` solo reconstruirá dicho módulo y sus dependencias directas de flujo, dejando intacto el resto de la compilación, acelerando los ciclos de desarrollo.
+### Resolución de Módulos en Compilación
+Cuando declaras un módulo externo utilizando la sintaxis `mod back_of_house;` (sin llaves de bloque):
+1.  El compilador `rustc` no busca todas las dependencias en tiempo de ejecución. En su lugar, durante la fase de análisis sintáctico de compilación, busca un archivo físico en el disco que coincida con el nombre del módulo.
+2.  Las rutas permitidas para encontrar el archivo de un módulo llamado `modulo` secundario de `main.rs` son:
+    *   `src/modulo.rs` (Estilo moderno de Rust 2018+).
+    *   `src/modulo/mod.rs` (Estilo antiguo de Rust 2015, aún soportado pero menos preferido).
+3.  Si encuentra el archivo, concatena lógicamente su árbol AST al nodo principal del crate root, generando una sola unidad de compilación coherente.
 
 ---
 
 ## 4. Cheat Sheet de Sintaxis y Errores Comunes
 
-| Sintaxis / Patrón Exacto | Propósito y Caso de Uso | Error Típico del Compilador (y Solución) |
+### Visibilidad de Elementos
+
+| Sintaxis | Visibilidad / Alcance | Accesible por Crate Externo |
 | :--- | :--- | :--- |
-| `mod mi_modulo;` | Declarar un módulo externo cuyo código reside en un archivo del mismo nombre. | Colocar el archivo en la ubicación incorrecta o duplicar la declaración:<br>❌ Crear el archivo en la raíz sin declarar `mod` en `lib.rs` o `main.rs`.<br>`error[E0583]: file not found for module 'mi_modulo'`<br>✔️ **Solución:** Declarar `mod mi_modulo;` en el archivo raíz (`lib.rs`/`main.rs`) y colocar el archivo en `src/mi_modulo.rs`. |
-| `pub struct S {`<br>&nbsp;&nbsp;&nbsp;&nbsp;`pub a: i32,`<br>&nbsp;&nbsp;&nbsp;&nbsp;`b: i32,`<br>`}` | Estructura pública con un campo público y uno privado por defecto. | Intentar instanciar directamente la estructura desde un módulo externo:<br>❌ `let x = S { a: 1, b: 2 };`<br>`error[E0451]: field 'b' of struct 'S' is private`<br>✔️ **Solución:** Crear un método público constructor (ej. `pub fn nuevo(...) -> Self`) dentro del bloque `impl S` para instanciarla desde el exterior. |
-| `use crate::a::b::Item;` | Traer un elemento al ámbito del módulo actual usando ruta absoluta. | Intentar usar un elemento que es privado en su módulo de origen:<br>❌ Importar `Item` cuando carece del prefijo `pub`.<br>`error[E0603]: struct 'Item' is private`<br>✔️ **Solución:** Agregar la palabra clave `pub` delante de la declaración de `Item` (y asegurar que sus módulos contenedores también sean públicos). |
-| `pub use crate::interna::X;` | Reexportación de un tipo para simplificar la API expuesta al exterior. | Crear dependencias cíclicas o rutas ambiguas al reexportar:<br>❌ Reexportar un elemento con el mismo nombre de otro elemento activo.<br>`error[E0252]: the name 'X' is defined multiple times`<br>✔️ **Solución:** Renombrar el elemento importado con un alias utilizando `as` (ej. `pub use crate::interna::X as NuevoNombre;`). |
-| `super::funcion_padre();` | Invocar una función del módulo superior usando ruta relativa. | Intentar usar `super` en el módulo raíz (`crate`):<br>❌ Llamar a `super::` en `lib.rs` o `main.rs`.<br>`error[E0433]: failed to resolve: try using 'crate'`<br>✔️ **Solución:** Reemplazar por `self::` o `crate::`, ya que no existe un módulo padre por encima de la raíz del crate. |
+| `mod modulo` | Privado por defecto al módulo padre. | No |
+| `pub mod modulo` | Módulo público a nivel externo. | Sí |
+| `pub struct S` | Estructura pública (campos privados). | Sí (pero no instanciable mediante literal) |
+| `pub enum E` | Enum público (variantes públicas). | Sí (todas sus variantes) |
+
+---
+
+### Errores Comunes de Compilación y sus Soluciones
+
+#### 1. Intentar acceder a un campo privado de una estructura pública
+Intentar leer o escribir en un campo que carece de la palabra clave `pub` desde fuera de su módulo de origen:
+❌ **Código Erróneo:**
+```rust,compile_fail
+// En src/restaurante.rs
+pub struct Desayuno {
+    pub pan: String,
+    fruta_temporada: String, // Campo privado
+}
+
+// En src/main.rs
+fn main() {
+    let mut orden = restaurante::Desayuno::con_centeno("Fresa");
+    // Error: fruta_temporada es privada
+    orden.fruta_temporada = String::from("Manzana"); 
+}
+```
+*   **Mensaje de Error:** `error[E0616]: field `fruta_temporada` of struct `Desayuno` is private`
+*   ✔️ **Solución:** Si el negocio requiere modificar ese campo directamente, añádele la palabra clave `pub`. Si no, expón un método mutable público (`pub fn set_fruta(&mut self, ...)`) en el bloque `impl` para encapsular el acceso:
+    ```rust
+    pub struct Desayuno {
+        pub pan: String,
+        pub fruta_temporada: String, // Campo público
+    }
+    ```
+
+#### 2. Declaración de módulo sin archivo físico correspondiente en disco
+Declarar un módulo externo usando `mod` pero olvidar crear el archivo o colocarlo en la ruta incorrecta:
+❌ **Código en `src/lib.rs`:**
+```rust,compile_fail
+// El compilador busca src/servicios.rs o src/servicios/mod.rs
+mod servicios; 
+```
+*   **Mensaje de Error:** `error[E0583]: file not found for module `servicios``
+*   ✔️ **Solución:** Crear el archivo en la ruta esperada por `rustc` para la edición actual (ej. `src/servicios.rs`) o ajustar el path si se encuentra en un submódulo anidado.

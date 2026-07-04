@@ -1,0 +1,8 @@
+[package]
+name = "ex11_writing_tests"
+version = "0.1.0"
+edition = { workspace = true }
+rust-version = { workspace = true }
+
+[dependencies]
+

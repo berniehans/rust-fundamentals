@@ -100,6 +100,78 @@ name = "ex02_guessing_game"
 version = "0.1.0"
 
 [[package]]
+name = "ex03_common_concepts"
+version = "0.1.0"
+
+[[package]]
+name = "ex04_understanding_ownership"
+version = "0.1.0"
+
+[[package]]
+name = "ex05_using_structs"
+version = "0.1.0"
+
+[[package]]
+name = "ex06_enums_patterns"
+version = "0.1.0"
+
+[[package]]
+name = "ex07_managing_projects"
+version = "0.1.0"
+
+[[package]]
+name = "ex08_common_collections"
+version = "0.1.0"
+
+[[package]]
+name = "ex09_error_handling"
+version = "0.1.0"
+
+[[package]]
+name = "ex10_generics_traits_lifetimes"
+version = "0.1.0"
+
+[[package]]
+name = "ex11_writing_tests"
+version = "0.1.0"
+
+[[package]]
+name = "ex12_minigrep"
+version = "0.1.0"
+
+[[package]]
+name = "ex13_functional_features"
+version = "0.1.0"
+
+[[package]]
+name = "ex14_cargo_more"
+version = "0.1.0"
+
+[[package]]
+name = "ex15_smart_pointers"
+version = "0.1.0"
+
+[[package]]
+name = "ex16_fearless_concurrency"
+version = "0.1.0"
+
+[[package]]
+name = "ex17_oop_features"
+version = "0.1.0"
+
+[[package]]
+name = "ex18_patterns_matching"
+version = "0.1.0"
+
+[[package]]
+name = "ex19_advanced_features"
+version = "0.1.0"
+
+[[package]]
+name = "ex20_web_server"
+version = "0.1.0"
+
+[[package]]
 name = "getrandom"
 version = "0.2.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"

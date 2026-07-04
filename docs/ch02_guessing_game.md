@@ -13,7 +13,6 @@ use std::io;
 
 fn main() {
     println!("¡Adivina el número!");
-
     println!("Por favor, introduce tu suposición.");
 
     let mut guess = String::new();
@@ -32,17 +31,12 @@ fn main() {
 ### Variables y Mutabilidad
 *   En Rust, las variables son **inmutables por defecto**. Esto promueve la seguridad y la concurrencia.
 *   `let mut guess`: Para permitir que una variable cambie de valor, debemos agregar la palabra clave `mut` (mutable).
-*   `String::new()`: Crea una nueva instancia vacía de un `String`. `new` es una **función asociada** (associated function) al tipo `String` (similar a un método estático en otros lenguajes) que actúa como constructor.
+*   `String::new()`: Crea una nueva instancia vacía de un `String`. `new` es una **función asociada** (associated function) al tipo `String` (similar a un método estático en otros lenguajes) que actúa como constructor en el montón (Heap).
 
 ### Referencias y Seguridad de Memoria
 *   `.read_line(&mut guess)`: Pasamos `&mut guess` como argumento.
 *   El símbolo `&` indica que estamos pasando una **referencia** a la variable, lo que permite que diferentes partes del código accedan a la misma porción de memoria sin necesidad de copiarla.
 *   Al igual que las variables, las referencias en Rust son **inmutables por defecto**. Por lo tanto, debemos escribir `&mut guess` en lugar de `&guess` para que el método pueda modificar el contenido de la variable.
-
-### Manejo de Errores con `Result`
-*   `read_line` devuelve un valor del tipo `std::io::Result`, el cual es un enum que representa el éxito o fracaso de una operación. Cuenta con dos variantes: `Ok` (éxito, contiene el valor de retorno) y `Err` (fracaso, contiene información del error).
-*   `Result` tiene un método llamado `.expect()`. Si la instancia de `Result` es `Err`, `.expect()` detendrá el programa de forma inmediata (*panic*) mostrando el mensaje provisto. Si es `Ok`, extraerá y devolverá el valor de retorno (en este caso, la cantidad de bytes leídos).
-*   **Advertencia de Compilación:** Si no manejas el tipo `Result` (por ejemplo, omitiendo `.expect`), el compilador de Rust generará un warning indicando que no estás usando un valor que podría contener un error.
 
 ---
 
@@ -60,16 +54,13 @@ rand = "0.8.5"
 
 Rust utiliza **Versionamiento Semántico (SemVer)**. La declaración `"0.8.5"` es en realidad una abreviatura de `^0.8.5`, lo que le indica a Cargo que puede utilizar cualquier versión que sea compatible a nivel de API con la versión `0.8.5` (por ejemplo, `0.8.6`, pero nunca `0.9.0`).
 
-### El Rol de `Cargo.lock`
-Cuando compilas por primera vez después de añadir una dependencia, Cargo descarga la versión compatible más reciente y la registra en `Cargo.lock`. 
-*   **Garantía de Reproducibilidad:** A partir de ese momento, Cargo solo utilizará las versiones especificadas en `Cargo.lock`, asegurando que el proyecto compile de la misma forma en cualquier computadora.
-*   **Actualizaciones Controladas:** Si deseas actualizar una dependencia a su siguiente versión compatible, debes ejecutar explícitamente `cargo update`.
-
 ### Generando el Número Secreto
 ```rust
 use rand::Rng;
 
-let secret_number = rand::thread_rng().gen_range(1..=100);
+fn main() {
+    let secret_number = rand::thread_rng().gen_range(1..=100);
+}
 ```
 *   `use rand::Rng;`: El trait `Rng` define métodos que los generadores de números aleatorios implementan. Este trait debe estar en el scope para poder usar métodos como `gen_range`.
 *   `rand::thread_rng()`: Obtiene un generador de números aleatorios local al hilo de ejecución actual y sembrado por el sistema operativo.
@@ -84,86 +75,104 @@ Una vez capturada la entrada del usuario y generado el número aleatorio, debemo
 ```rust
 use std::cmp::Ordering;
 
-match guess.cmp(&secret_number) {
-    Ordering::Less => println!("¡Muy pequeño!"),
-    Ordering::Greater => println!("¡Muy grande!"),
-    Ordering::Equal => println!("¡Ganaste!"),
+fn main() {
+    let secret_number = 50; // Inferencia de tipo i32
+    let mut guess = String::from("50");
+
+    // Para comparar, primero debemos convertir guess a entero
+    let guess: u32 = guess.trim().parse().expect("Introduce un número");
+
+    match guess.cmp(&secret_number) {
+        Ordering::Less => println!("¡Muy pequeño!"),
+        Ordering::Greater => println!("¡Muy grande!"),
+        Ordering::Equal => println!("¡Ganaste!"),
+    }
 }
 ```
 
 ### El Enum `Ordering` y `match`
 *   `std::cmp::Ordering`: Es un enum que contiene tres variantes: `Less`, `Greater` y `Equal`. Se utiliza al comparar dos valores.
-*   `match` (Pattern Matching): Es una estructura de control de flujo extremadamente potente en Rust. Evalúa una expresión y ejecuta el bloque del "brazo" (*arm*) cuyo patrón coincida con el valor resultante.
-*   **Exhaustividad:** El compilador de Rust obliga a que los bloques `match` sean exhaustivos. Debes cubrir todas las posibilidades del valor evaluado; de lo contrario, el código no compilará.
+*   `match` (Pattern Matching): Evalúa una expresión y ejecuta el brazo (*arm*) cuyo patrón coincida con el valor resultante. El compilador de Rust obliga a que los bloques `match` sean exhaustivos.
 
-### Conversión de Tipos y Shadowing (Enmascaramiento)
-Por defecto, Rust infiere que la variable `guess` es un `String`, pero `secret_number` se infiere como un tipo numérico (típicamente `i32` o `u32`). No podemos comparar un `String` con un número.
-
-Para solucionar esto, convertimos la entrada del usuario:
-
-```rust
-let guess: u32 = guess.trim().parse().expect("¡Por favor introduce un número!");
-```
-
-*   **Shadowing (Enmascaramiento):** Rust nos permite declarar una nueva variable con el mismo nombre que otra anterior (`let guess`). Esto se utiliza frecuentemente cuando se desea transformar el tipo de un valor sin tener que crear nombres únicos como `guess_str` y `guess_int`.
-*   `trim()`: Elimina cualquier espacio en blanco al inicio y final del `String`, incluyendo el carácter de salto de línea (`\n` o `\r\n`) introducido al presionar Enter en la consola.
-*   `parse()`: Convierte el `String` a otro tipo de datos. Al escribir `let guess: u32`, le estamos indicando explícitamente a `parse` que queremos convertir el texto en un entero sin signo de 32 bits.
-*   `parse()` devuelve un tipo `Result`, por lo que nuevamente debemos usar `.expect()` para manejar un posible error si el usuario introduce texto no numérico.
+### Shadowing (Enmascaramiento)
+*   Rust nos permite declarar una nueva variable con el mismo nombre que otra anterior (`let guess`). Esto se utiliza frecuentemente cuando se desea transformar el tipo de un valor sin tener que crear nombres únicos como `guess_str` y `guess_int`.
+*   `trim()`: Elimina espacios en blanco y el carácter de salto de línea (`\n` o `\r\n`) introducido al presionar Enter en la terminal.
+*   `parse()`: Convierte el `String` a otro tipo de datos (en este caso, un `u32` explícito). Devuelve un tipo `Result`.
 
 ---
 
-## 4. Control de Bucles y Manejo de Errores Avanzado
+## 4. Cheat Sheet de Sintaxis y Errores Comunes
 
-Para permitir que el usuario intente adivinar varias veces, introducimos un bucle infinito y un manejo de errores más refinado.
+### Resumen de APIs de Entrada/Salida y Utilidades
 
-```rust
-use rand::Rng;
-use std::cmp::Ordering;
+| Expresión / Método | Tipo de Retorno | Propósito |
+| :--- | :--- | :--- |
+| `String::new()` | `String` | Crea una cadena vacía en el montón (Heap). |
+| `io::stdin().read_line(&mut s)` | `Result<usize, Error>` | Lee una línea de consola y la añade a la variable mutable `s`. |
+| `s.trim()` | `&str` | Elimina saltos de línea y espacios en los extremos de la cadena. |
+| `s.parse()` | `Result<T, ParseError>` | Intenta analizar la cadena y convertirla en otro tipo de datos `T`. |
+| `std::cmp::Ordering` | Enum | Contiene `Less`, `Greater` y `Equal` para comparaciones. |
+
+---
+
+### Errores Comunes de Compilación y sus Soluciones
+
+#### 1. Pasar una referencia inmutable a una función que modifica el valor
+Si pasas un préstamo inmutable (`&`) a un método como `read_line` que requiere modificar el valor interno:
+❌ **Código Erróneo:**
+```rust,compile_fail
 use std::io;
 
 fn main() {
-    println!("¡Adivina el número!");
+    let mut guess = String::new();
+    // Error: se pasa &guess en lugar de &mut guess
+    io::stdin().read_line(&guess).unwrap(); 
+}
+```
+*   **Mensaje de Error:** `error[E0308]: mismatched types: expected mutable reference `&mut String`, found reference `&String``
+*   ✔️ **Solución:** Las referencias son inmutables por defecto. Asegúrate de anteponer `&mut` en la llamada:
+    ```rust
+    io::stdin().read_line(&mut guess).unwrap();
+    ```
 
-    let secret_number = rand::thread_rng().gen_range(1..=100);
+#### 2. Comparación directa de tipos incompatibles (ej. String vs. Entero)
+Si intentas comparar variables de tipos distintos sin antes parsear o convertir:
+❌ **Código Erróneo:**
+```rust,compile_fail
+use std::cmp::Ordering;
 
-    loop {
-        println!("Por favor, introduce tu suposición.");
+fn main() {
+    let guess = String::from("42");
+    let numero_secreto = 42;
 
-        let mut guess = String::new();
-
-        io::stdin()
-            .read_line(&mut guess)
-            .expect("Fallo al leer la línea");
-
-        // Manejo de errores sin abortar el programa
-        let guess: u32 = match guess.trim().parse() {
-            Ok(num) => num,
-            Err(_) => {
-                println!("Por favor, introduce solo números.");
-                continue;
-            }
-        };
-
-        println!("Suposición: {guess}");
-
-        match guess.cmp(&secret_number) {
-            Ordering::Less => println!("¡Muy pequeño!"),
-            Ordering::Greater => println!("¡Muy grande!"),
-            Ordering::Equal => {
-                println!("¡Ganaste!");
-                break; // Sale del bucle loop
-            }
-        }
+    // Error: no se puede comparar String con un entero directamente
+    match guess.cmp(&numero_secreto) {
+        Ordering::Equal => println!("Iguales"),
+        _ => println!("Diferentes"),
     }
 }
 ```
+*   **Mensaje de Error:** `error[E0308]: mismatched types: expected `&String`, found `&{integer}``
+*   ✔️ **Solución:** Utilizar `.parse()` para transformar el String en un entero del mismo tipo antes de llamar al comparador:
+    ```rust
+    let guess: i32 = guess.trim().parse().unwrap();
+    match guess.cmp(&numero_secreto) { ... }
+    ```
 
-### Bucle Infinito (`loop`) y Salida (`break`)
-*   `loop`: Crea un bucle infinito.
-*   `break`: Detiene la ejecución del bucle actual de forma inmediata. En este caso, cuando el usuario adivina el número (`Ordering::Equal`), el juego termina.
-*   `continue`: Detiene la iteración actual del bucle e inicia la siguiente desde el principio.
+#### 3. Ignorar valores de tipo `Result` (Advertencia del compilador)
+Omitir el manejo de operaciones que pueden fallar y devuelven un `Result`:
+❌ **Código Erróneo:**
+```rust
+use std::io;
 
-### Manejo de Errores con `match`
-En lugar de crasear el programa con `.expect()` si el usuario ingresa algo inválido, podemos usar un bloque `match` para procesar el tipo `Result` devuelto por `parse()`:
-*   `Ok(num)`: Si la conversión fue exitosa, extraemos el número y lo asignamos a la variable `guess`.
-*   `Err(_)`: El guion bajo `_` es un comodín que coincide con cualquier valor de error sin necesidad de guardarlo. En este caso, imprimimos un mensaje de aviso y usamos `continue` para saltar el resto del bucle e iniciar una nueva iteración.
+fn main() {
+    let mut guess = String::new();
+    // Compila pero emite una advertencia al no manejar el Result devuelto
+    io::stdin().read_line(&mut guess); 
+}
+```
+*   **Mensaje de Advertencia:** `warning: unused `Result` that must be used`
+*   ✔️ **Solución:** Llamar a `.expect()` o usar un bloque `match` sobre el enum retornado para gestionar explícitamente el posible error de I/O:
+    ```rust
+    io::stdin().read_line(&mut guess).expect("Fallo al leer");
+    ```
