@@ -62,7 +62,7 @@ mod tests {
     fn test_filtro_personalizado_closure() {
         let filtro = FiltroPersonalizado;
         let v = vec![1, 3, 5, 10, 15];
-        
+
         // Filtrar números divisibles por 5
         let res = filtro.filtrar(v, |x| x % 5 == 0);
         assert_eq!(res, vec![5, 10, 15]);

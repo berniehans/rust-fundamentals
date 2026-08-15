@@ -58,9 +58,18 @@ mod tests {
 
     #[test]
     fn test_validar_entrada_fallida() {
-        assert_eq!(validar_entrada("hola"), Err("Por favor, introduce un número válido."));
-        assert_eq!(validar_entrada("42a"), Err("Por favor, introduce un número válido."));
-        assert_eq!(validar_entrada(""), Err("Por favor, introduce un número válido."));
+        assert_eq!(
+            validar_entrada("hola"),
+            Err("Por favor, introduce un número válido.")
+        );
+        assert_eq!(
+            validar_entrada("42a"),
+            Err("Por favor, introduce un número válido.")
+        );
+        assert_eq!(
+            validar_entrada(""),
+            Err("Por favor, introduce un número válido.")
+        );
     }
 
     #[test]

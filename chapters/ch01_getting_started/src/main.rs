@@ -5,7 +5,7 @@
 // Rust requiere que todo programa ejecutable tenga una función llamada 'main' sin parámetros.
 // Esta función actúa como el entrypoint del sistema operativo al lanzar el proceso binario.
 fn main() {
-    // Aquí invocamos a la macro 'println!'. 
+    // Aquí invocamos a la macro 'println!'.
     // NOTA CLAVE: El símbolo de exclamación '!' indica que esto es una MACRO y no una función ordinaria.
     // A diferencia de una función, la macro procesa y valida sus argumentos en tiempo de compilación.
     // Esto garantiza que cualquier formateo incorrecto se detecte antes de generar el código de máquina.
@@ -21,5 +21,8 @@ fn main() {
     // Durante la compilación, Rust comprobará que el número de llaves '{}' coincida exactamente con
     // el número de argumentos que le siguen a la cadena de formato.
     let capitulo = 1;
-    println!("Estás aprendiendo el Capítulo {:02} con rigor de nivel de sistemas.", capitulo);
+    println!(
+        "Estás aprendiendo el Capítulo {:02} con rigor de nivel de sistemas.",
+        capitulo
+    );
 }

@@ -1,0 +1,14 @@
+[book]
+authors = ["berniehans", "rust-fundamentals contributors"]
+language = "es"
+multilingual = false
+src = "docs"
+title = "Rust Fundamentals"
+description = "Bitácora de estudio estructurada y completa de The Rust Programming Language"
+
+[output.html]
+git-repository-url = "https://github.com/berniehans/rust-fundamentals"
+edit-url-template = "https://github.com/berniehans/rust-fundamentals/edit/main/{path}"
+default-theme = "rust"
+preferred-dark-theme = "navy"
+mathjax-support = true

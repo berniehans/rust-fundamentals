@@ -6,8 +6,8 @@ pub mod almacen {
     /// Representa un producto en la base de datos física del almacén.
     #[derive(Debug, Clone, PartialEq)]
     pub struct Producto {
-        pub nombre: String,        // Nombre expuesto al exterior
-        cantidad: u32,             // Inventario privado del almacén
+        pub nombre: String, // Nombre expuesto al exterior
+        cantidad: u32,      // Inventario privado del almacén
     }
 
     impl Producto {

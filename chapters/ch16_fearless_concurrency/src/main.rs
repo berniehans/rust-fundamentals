@@ -6,7 +6,7 @@
 //! 2. Transferencia de mensajes entre hilos usando canales (MPSC: Multiple Producer, Single Consumer).
 //! 3. Concurrencia de estado compartido usando exclusión mutua (`Mutex`) y contadores de referencias seguros para hilos (`Arc`).
 
-use std::sync::{mpsc, Arc, Mutex};
+use std::sync::{Arc, Mutex, mpsc};
 use std::thread;
 use std::time::Duration;
 
@@ -43,7 +43,7 @@ fn demo_hilos_basicos() {
     }
 
     println!("   [Hilo Principal] Esperando a que el hilo secundario termine...");
-    
+
     // `.join()` bloquea el hilo actual hasta que el hilo representado por el handle finalice.
     // Retorna un Result con el valor de retorno de la clausura o un error si el hilo hizo panic.
     match handle.join() {

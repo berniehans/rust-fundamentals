@@ -59,11 +59,8 @@ mod tests {
 
     #[test]
     fn test_lista_cons_box() {
-        let lista = ListaCons::nueva()
-            .prepended(3)
-            .prepended(2)
-            .prepended(1);
-        
+        let lista = ListaCons::nueva().prepended(3).prepended(2).prepended(1);
+
         assert_eq!(lista.longitud(), 3);
     }
 

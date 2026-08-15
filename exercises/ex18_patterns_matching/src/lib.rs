@@ -28,16 +28,12 @@ pub enum Accion {
 pub fn procesar_accion(accion: Accion) -> String {
     match accion {
         // 1. Desestructuración con guardas condicionales (match guard)
-        Accion::Mover(Coordenada { x, y }) if x == 0 && y == 0 => {
-            String::from("Origen detectado.")
-        }
+        Accion::Mover(Coordenada { x, y }) if x == 0 && y == 0 => String::from("Origen detectado."),
         Accion::Mover(Coordenada { x, y }) => {
             format!("Moviendo a posición física x={x}, y={y}.")
         }
         // 2. Coincidencia estructurada y rangos numéricos
-        Accion::Pintar { r: 255, g: 0, b: 0 } => {
-            String::from("Pintando de color Rojo Puro.")
-        }
+        Accion::Pintar { r: 255, g: 0, b: 0 } => String::from("Pintando de color Rojo Puro."),
         Accion::Pintar { r, g, b } => {
             format!("Pintando con color RGB({}, {}, {}).", r, g, b)
         }
@@ -82,10 +78,17 @@ mod tests {
             "Pintando de color Rojo Puro."
         );
         assert_eq!(
-            procesar_accion(Accion::Pintar { r: 10, g: 20, b: 30 }),
+            procesar_accion(Accion::Pintar {
+                r: 10,
+                g: 20,
+                b: 30
+            }),
             "Pintando con color RGB(10, 20, 30)."
         );
-        assert_eq!(procesar_accion(Accion::Ninguna), "Ninguna acción a procesar.");
+        assert_eq!(
+            procesar_accion(Accion::Ninguna),
+            "Ninguna acción a procesar."
+        );
     }
 
     #[test]

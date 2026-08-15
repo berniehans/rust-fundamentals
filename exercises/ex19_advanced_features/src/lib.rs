@@ -60,7 +60,7 @@ mod tests {
     #[test]
     fn test_analizador_tipo_asociado() {
         let parser = ParseadorEnteros;
-        
+
         let res_ok = parser.analizar(String::from("  42  "));
         assert_eq!(res_ok, Ok(42));
 

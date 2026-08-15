@@ -63,10 +63,13 @@ mod tests {
 Rust es rapido, seguro
 y muy divertido.
 No es tan rapido como C, pero es más seguro.";
-        
+
         assert_eq!(
             buscar(query, contenido),
-            vec!["Rust es rapido, seguro", "No es tan rapido como C, pero es más seguro."]
+            vec![
+                "Rust es rapido, seguro",
+                "No es tan rapido como C, pero es más seguro."
+            ]
         );
     }
 

@@ -17,7 +17,7 @@ pub fn suma_paralela(datos: &[i32], num_hilos: usize) -> i32 {
         return 0;
     }
 
-    let tamaño_chunk = (datos.len() + num_hilos - 1) / num_hilos;
+    let tamaño_chunk = datos.len().div_ceil(num_hilos);
 
     thread::scope(|s| {
         let mut manejadores = Vec::new();

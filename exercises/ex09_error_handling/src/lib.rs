@@ -16,7 +16,9 @@ impl std::fmt::Display for ErrorPersonalizado {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             ErrorPersonalizado::NoEncontrado(msg) => write!(f, "Archivo no encontrado: {msg}"),
-            ErrorPersonalizado::ParseoInvalido(msg) => write!(f, "Formato numérico inválido: {msg}"),
+            ErrorPersonalizado::ParseoInvalido(msg) => {
+                write!(f, "Formato numérico inválido: {msg}")
+            }
         }
     }
 }

@@ -1,7 +1,7 @@
 // exercises/ex20_web_server/src/lib.rs
 // Crate de ejercicios prácticos para el Capítulo 20.
 
-use std::sync::{mpsc, Arc, Mutex};
+use std::sync::{Arc, Mutex, mpsc};
 use std::thread;
 
 type Job = Box<dyn FnOnce() + Send + 'static>;
@@ -67,17 +67,19 @@ struct Worker {
 
 impl Worker {
     fn nuevo(id: usize, receiver: Arc<Mutex<mpsc::Receiver<Job>>>) -> Self {
-        let thread = thread::spawn(move || loop {
-            // Obtenemos la tarea de la cola adquiriendo el lock del mutex de forma segura
-            let mensaje = receiver.lock().unwrap().recv();
+        let thread = thread::spawn(move || {
+            loop {
+                // Obtenemos la tarea de la cola adquiriendo el lock del mutex de forma segura
+                let mensaje = receiver.lock().unwrap().recv();
 
-            match mensaje {
-                Ok(job) => {
-                    job();
-                }
-                Err(_) => {
-                    // El canal se ha cerrado: salimos del bucle limpiamente
-                    break;
+                match mensaje {
+                    Ok(job) => {
+                        job();
+                    }
+                    Err(_) => {
+                        // El canal se ha cerrado: salimos del bucle limpiamente
+                        break;
+                    }
                 }
             }
         });

@@ -40,7 +40,10 @@ fn demostrar_mutabilidad_y_shadowing() {
     // let redefine el identificador en el compilador. Permite cambiar el tipo de dato.
     // No incurre en sobrecosto en tiempo de ejecución; es una abstracción de costo cero.
     let espacios = "   "; // Tipo: &str (referencia a cadena de 16 bytes en el Stack)
-    println!("Variable original 'espacios' (String Slice): '{}'", espacios);
+    println!(
+        "Variable original 'espacios' (String Slice): '{}'",
+        espacios
+    );
 
     let espacios = espacios.len(); // Tipo: usize (entero de 8 bytes en 64-bits)
     println!("Variable enmascarada (shadowed) 'espacios' (usize): {espacios}");
@@ -51,10 +54,10 @@ fn demostrar_tipos_datos() {
     println!("\n--- 2. TIPOS DE DATOS (STACK LAYOUT) ---");
 
     // Tipos Escalares: representan un único valor
-    let entero: i32 = -42;         // Entero de 32 bits con signo
-    let flotante: f64 = 3.14159;    // Punto flotante de 64 bits (IEEE-754)
-    let booleano: bool = true;      // Booleano, ocupa exactamente 1 byte
-    let caracter: char = '🦀';      // Carácter Unicode de 4 bytes en Rust
+    let entero: i32 = -42; // Entero de 32 bits con signo
+    let flotante: f64 = std::f64::consts::PI; // Punto flotante de 64 bits (IEEE-754)
+    let booleano: bool = true; // Booleano, ocupa exactamente 1 byte
+    let caracter: char = '🦀'; // Carácter Unicode de 4 bytes en Rust
 
     println!("Escalares: i32={entero}, f64={flotante}, bool={booleano}, char={caracter}");
 
@@ -69,8 +72,9 @@ fn demostrar_tipos_datos() {
 
     // Arreglos (Arrays): Longitud fija, elementos homogéneos almacenados de forma contigua
     let array: [i32; 5] = [10, 20, 30, 40, 50];
-    println!("Array: primer elemento = {}, tamaño físico = {} bytes", 
-        array[0], 
+    println!(
+        "Array: primer elemento = {}, tamaño físico = {} bytes",
+        array[0],
         std::mem::size_of_val(&array) // 5 elementos * 4 bytes = 20 bytes
     );
 }

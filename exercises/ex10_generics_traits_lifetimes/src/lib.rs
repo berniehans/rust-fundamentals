@@ -47,11 +47,7 @@ impl Resumible for Tweet {
 /// assert_eq!(result, "larga_cadena");
 /// ```
 pub fn mayor_con_lifetime<'a>(x: &'a str, y: &'a str) -> &'a str {
-    if x.len() > y.len() {
-        x
-    } else {
-        y
-    }
+    if x.len() > y.len() { x } else { y }
 }
 
 #[cfg(test)]
@@ -74,14 +70,17 @@ mod tests {
             usuario: String::from("rust_lang"),
             mensaje: String::from("¡Aprender Rust con Cargo Workspaces es genial!"),
         };
-        assert_eq!(tweet.resumir(), "@rust_lang: ¡Aprender Rust con Cargo Workspaces es genial!");
+        assert_eq!(
+            tweet.resumir(),
+            "@rust_lang: ¡Aprender Rust con Cargo Workspaces es genial!"
+        );
     }
 
     #[test]
     fn test_mayor_con_lifetime() {
         let s1 = String::from("primera");
         let s2 = "segunda_larga";
-        
+
         let res = mayor_con_lifetime(&s1, s2);
         assert_eq!(res, "segunda_larga");
     }
