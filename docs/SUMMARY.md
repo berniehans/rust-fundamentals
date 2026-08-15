@@ -1,6 +1,6 @@
 # Resumen de Capítulos
 
-[Introducción](ch01_getting_started.md)
+[Introducción](intro.md)
 
 - [Capítulo 01: Primeros Pasos (Getting Started)](ch01_getting_started.md)
 - [Capítulo 02: Juego de Adivinanzas (Guessing Game)](ch02_guessing_game.md)
