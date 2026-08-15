@@ -2,12 +2,21 @@
 
 [![Rust](https://img.shields.io/badge/rust-v1.96.0+-orange.svg?style=for-the-badge&logo=rust)](https://www.rust-lang.org/)
 [![Cargo Workspace](https://img.shields.io/badge/Cargo-Workspace-blue.svg?style=for-the-badge&logo=rust)](https://doc.rust-lang.org/cargo/reference/workspaces.html)
+[![Online Book](https://img.shields.io/badge/📖_Libro_Web-GitHub_Pages-blue?style=for-the-badge&logo=github)](https://berniehans.github.io/rust-fundamentals/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 [![CI](https://github.com/berniehans/rust-fundamentals/actions/workflows/ci.yml/badge.svg)](https://github.com/berniehans/rust-fundamentals/actions/workflows/ci.yml)
 
 ¡Bienvenido/a a **rust-fundamentals**! Este repositorio es una bitácora de estudio completa, estructurada y en español del libro oficial [**"The Rust Programming Language"**](https://doc.rust-lang.org/book/). 
 
-El proyecto ha sido organizado como un **Cargo Workspace** (Espacio de Trabajo) modular, dividiendo cada capítulo del libro en un subproyecto (*crate*) independiente dentro de la carpeta `chapters/` y sus retos prácticos en `exercises/`. Esto te permite repasar y ejecutar ejemplos de código de forma aislada, limpia y con tiempos de compilación optimizados gracias a la caché global.
+---
+
+## 📖 Libro Digital en Vivo (`mdBook`)
+
+Puedes leer el libro completo interactivo, con soporte para temas oscuro/claro y navegación por capítulos directamente desde tu navegador:
+
+👉 **[https://berniehans.github.io/rust-fundamentals/](https://berniehans.github.io/rust-fundamentals/)**
+
+El libro se compila y despliega automáticamente en **GitHub Pages** mediante GitHub Actions en cada actualización.
 
 ---
 
