@@ -128,33 +128,115 @@ impl Worker {
 fn main() {
     println!("=== CAPÍTULO 20: PROYECTO FINAL (SERVIDOR WEB MULTIHILO) ===");
 
-    println!("\n--- 1. INICIALIZACIÓN DEL THREADPOOL INDUSTRIAL (4 HILOS) ---");
+    // --- Parte 1: Demostración rápida del ThreadPool con tareas simuladas ---
+    println!("\n--- 1. DEMOSTRACIÓN DEL THREADPOOL (TAREAS SIMULADAS) ---");
+    {
+        let pool = ThreadPool::nuevo(4);
+
+        for i in 1..=8 {
+            pool.ejecutar(move || {
+                let tiempo_proceso = if i % 2 == 0 { 50 } else { 20 };
+                println!(
+                    "    -> Procesando tarea #{} (duración simulada: {}ms)",
+                    i, tiempo_proceso
+                );
+                thread::sleep(Duration::from_millis(tiempo_proceso));
+            });
+        }
+
+        thread::sleep(Duration::from_millis(200));
+        // Al salir de este bloque, pool invoca Drop → Graceful Shutdown
+    }
+
+    // --- Parte 2: Servidor HTTP real con TcpListener ---
+    println!("\n--- 2. SERVIDOR HTTP REAL (TCP MULTIHILO) ---");
+    println!("Escuchando en http://127.0.0.1:7878");
+    println!("El servidor atenderá 4 peticiones y luego se apagará elegantemente.");
+    println!("Prueba con: curl http://127.0.0.1:7878");
+    println!("       o:   curl http://127.0.0.1:7878/sleep  (simula carga pesada)\n");
+
+    let listener = std::net::TcpListener::bind("127.0.0.1:7878").unwrap_or_else(|err| {
+        eprintln!("No se pudo enlazar al puerto 7878: {err}");
+        eprintln!("(Si el puerto está ocupado, otro proceso lo está usando.)");
+        std::process::exit(1);
+    });
+
     let pool = ThreadPool::nuevo(4);
 
-    println!("\n--- 2. SIMULACIÓN DE PETICIONES HTTP CONCURRENTES ---");
+    // Atendemos solo las primeras 4 conexiones para que el ejemplo termine limpiamente
+    for stream in listener.incoming().take(4) {
+        let stream = stream.unwrap();
 
-    // Simulamos 8 peticiones HTTP concurrentes entrando al servidor
-    for i in 1..=8 {
-        pool.ejecutar(move || {
-            let tiempo_proceso = if i % 2 == 0 { 50 } else { 20 };
-            println!(
-                "    -> Procesando solicitud HTTP #{} (duración simulada: {}ms)",
-                i, tiempo_proceso
-            );
-            thread::sleep(Duration::from_millis(tiempo_proceso));
+        pool.ejecutar(|| {
+            manejar_conexion(stream);
         });
     }
 
-    // Pequeña pausa para permitir que los trabajadores procesen la carga simulada
-    thread::sleep(Duration::from_millis(200));
+    // Al salir de main(), pool sale de ámbito y se invoca automáticamente Drop → Graceful Shutdown
+}
 
-    println!("\n--- 3. DETALLES DE INTEGRACIÓN TCP ---");
-    println!("Para enlazar este ThreadPool a sockets de red TCP reales:");
-    println!("  let listener = std::net::TcpListener::bind(\"127.0.0.1:7878\").unwrap();");
-    println!("  for stream in listener.incoming() {{");
-    println!("      let stream = stream.unwrap();");
-    println!("      pool.ejecutar(|| {{ procesar_stream_tcp(stream); }});");
-    println!("  }}");
+/// Procesa una conexión TCP entrante: lee la petición HTTP y responde con HTML.
+fn manejar_conexion(mut stream: std::net::TcpStream) {
+    use std::io::{BufRead, BufReader, Write};
 
-    // Al salir de main(), pool sale de ámbito y se invoca automáticamente Drop
+    let buf_reader = BufReader::new(&stream);
+
+    // Leemos la primera línea de la petición HTTP (ej: "GET / HTTP/1.1")
+    let linea_peticion = buf_reader
+        .lines()
+        .next()
+        .unwrap_or(Ok(String::new()))
+        .unwrap_or_default();
+
+    println!("  [Petición recibida]: {linea_peticion}");
+
+    let (linea_estado, cuerpo_html) = match linea_peticion.as_str() {
+        "GET / HTTP/1.1" => {
+            let html = "\
+<!DOCTYPE html>
+<html lang=\"es\">
+<head><meta charset=\"utf-8\"><title>Rust Web Server</title></head>
+<body>
+<h1>🦀 ¡Hola desde el servidor web multihilo de Rust!</h1>
+<p>Este servidor fue construido con <code>std::net::TcpListener</code> y un <code>ThreadPool</code> personalizado.</p>
+<p>Prueba <a href=\"/sleep\">/sleep</a> para ver la concurrencia en acción.</p>
+</body>
+</html>";
+            ("HTTP/1.1 200 OK", html)
+        }
+        "GET /sleep HTTP/1.1" => {
+            // Simulamos una petición pesada que tarda 2 segundos
+            thread::sleep(Duration::from_secs(2));
+            let html = "\
+<!DOCTYPE html>
+<html lang=\"es\">
+<head><meta charset=\"utf-8\"><title>Respuesta lenta</title></head>
+<body>
+<h1>⏳ Respuesta lenta completada</h1>
+<p>Esta petición tardó 2 segundos intencionalmente para demostrar que otros hilos del pool siguen atendiendo peticiones mientras tanto.</p>
+</body>
+</html>";
+            ("HTTP/1.1 200 OK", html)
+        }
+        _ => {
+            let html = "\
+<!DOCTYPE html>
+<html lang=\"es\">
+<head><meta charset=\"utf-8\"><title>404</title></head>
+<body><h1>404 - Página no encontrada</h1></body>
+</html>";
+            ("HTTP/1.1 404 NOT FOUND", html)
+        }
+    };
+
+    let longitud = cuerpo_html.len();
+    let respuesta = format!(
+        "{linea_estado}\r\nContent-Length: {longitud}\r\nContent-Type: text/html; charset=utf-8\r\n\r\n{cuerpo_html}"
+    );
+
+    stream
+        .write_all(respuesta.as_bytes())
+        .unwrap_or_else(|err| {
+            eprintln!("  [Error al escribir respuesta]: {err}");
+        });
 }

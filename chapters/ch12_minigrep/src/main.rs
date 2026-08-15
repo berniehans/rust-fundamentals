@@ -129,4 +129,28 @@ Ductilidad de abstracciones cero-costo.";
         "Buscando '{}' en el archivo '{}'...",
         config.consulta, config.ruta_archivo
     );
+
+    // Leer el contenido del archivo especificado por el usuario
+    let contenido = std::fs::read_to_string(&config.ruta_archivo).unwrap_or_else(|err| {
+        eprintln!("Error al leer el archivo '{}': {err}", config.ruta_archivo);
+        process::exit(1);
+    });
+
+    // Ejecutar la búsqueda y mostrar los resultados
+    match ejecutar_busqueda(&config, &contenido) {
+        Ok(coincidencias) => {
+            if coincidencias.is_empty() {
+                println!("No se encontraron coincidencias.");
+            } else {
+                println!("Coincidencias encontradas ({}):", coincidencias.len());
+                for linea in &coincidencias {
+                    println!("{linea}");
+                }
+            }
+        }
+        Err(e) => {
+            eprintln!("Error en la búsqueda: {e}");
+            process::exit(1);
+        }
+    }
 }

@@ -3,7 +3,7 @@
 [![Rust](https://img.shields.io/badge/rust-v1.96.0+-orange.svg?style=for-the-badge&logo=rust)](https://www.rust-lang.org/)
 [![Cargo Workspace](https://img.shields.io/badge/Cargo-Workspace-blue.svg?style=for-the-badge&logo=rust)](https://doc.rust-lang.org/cargo/reference/workspaces.html)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
-[![CI](https://img.shields.io/badge/CI-Passing-brightgreen.svg?style=for-the-badge&logo=githubactions)](https://github.com/berniehans/rust-fundamentals/actions)
+[![CI](https://github.com/berniehans/rust-fundamentals/actions/workflows/ci.yml/badge.svg)](https://github.com/berniehans/rust-fundamentals/actions/workflows/ci.yml)
 
 ¡Bienvenido/a a **rust-fundamentals**! Este repositorio es una bitácora de estudio completa, estructurada y en español del libro oficial [**"The Rust Programming Language"**](https://doc.rust-lang.org/book/). 
 
