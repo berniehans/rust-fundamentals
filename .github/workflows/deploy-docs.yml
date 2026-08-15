@@ -21,9 +21,9 @@ jobs:
       - uses: actions/checkout@v7
 
       - name: Setup mdBook
-        uses: peaceiris/actions-mdbook@v2
+        uses: taiki-e/install-action@v2
         with:
-          mdbook-version: 'latest'
+          tool: mdbook
 
       - name: Build with mdBook
         run: mdbook build
